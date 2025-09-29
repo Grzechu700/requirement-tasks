@@ -42,8 +42,19 @@ def process_view(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES["file"]
-            text = file.read().decode("utf-8")
+            try:
+                text = file.read().decode("utf-8")
+            except UnicodeDecodeError:
+                context = {
+                    "form": form,
+                    "title": "Upload new text file",
+                    "description": "Upload a text file to be processed.",
+                    "error_message": "File encoding error. Please upload a UTF-8 encoded text file.",
+                }
+                return render(request, "home.html", context)
+
             processed_text = process_text(text)
+
             context = {
                 "form": form,
                 "title": "Processed text",

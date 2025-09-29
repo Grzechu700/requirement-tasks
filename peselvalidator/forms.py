@@ -21,7 +21,8 @@ class PeselForm(forms.Form):
     )
 
     def clean_pesel(self):
-        pesel = self.cleaned_data["pesel"]
+        pesel = self.cleaned_data.get("pesel", "")
+        pesel = "".join(char for char in pesel if char.isdigit())
         result = validate_pesel(pesel)
 
         if not result["valid"]:

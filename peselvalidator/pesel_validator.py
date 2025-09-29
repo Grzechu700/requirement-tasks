@@ -95,7 +95,13 @@ def extract_birth_date(pesel: str) -> date | None:
     full_year = century + year_digits
 
     try:
-        return date(full_year, month, day)
+        birth_date = date(full_year, month, day)
+
+        if birth_date > date.today():
+            return None
+
+        return birth_date
+
     except ValueError:
         return None
 
