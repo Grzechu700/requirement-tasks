@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">{{ title }}</h2>
+                    </div>
+                    <div class="card-body">
+                        {% if description %}
+                        <p class="text-muted">{{ description }}</p>
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Validation Errors:</strong>
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if result %}
+                            {% if result.valid %}
+                            <div class="alert alert-success" role="alert">
+                                <h5 class="alert-heading">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                    </svg>
+                                    Valid PESEL Number
+                                </h5>
+                                <hr>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p class="mb-2"><strong>Birth Date:</strong></p>
+                                        <p class="fs-5 text-primary">{{ result.birth_date|date:"F d, Y" }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-2"><strong>Gender:</strong></p>
+                                        <p class="fs-5 text-primary">{{ result.gender }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-danger" role="alert">
+                                <h5 class="alert-heading">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                    Invalid PESEL Number
+                                </h5>
+                                <p class="mb-0">{{ result.error }}</p>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="{{ form.pesel.id_for_label }}" class="form-label">
+                                    {{ form.pesel.label }}
+                                </label>
+                                {{ form.pesel }}
+                                <div class="form-text">Enter 11-digit PESEL number</div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Validate PESEL
+                                </button>
+                            </div>
+                        </form>
+
+                        {% if result %}
+                        <div class="mt-3">
+                            <a href="{% url 'pesel_validator' %}" class="btn btn-outline-secondary">
+                                Validate Another PESEL
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-muted text-center">
+                        <small>PESEL validator - checks format, date, and checksum</small>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'home' %}" class="btn btn-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                        </svg>
+                        Back to Text Processor
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
